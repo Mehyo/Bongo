@@ -14,7 +14,7 @@
 
 "--" {ECHO; return SEPARATOR;}
 
-[0-9]+ {ECHO; return NUMBER;}
+[0-9]+ {ECHO; yylval = atoi(yytext); return NUMBER;}
 
 "," {ECHO; return COMMA;}
 

@@ -6,19 +6,20 @@ struct point
   int x;
   int y;
 };
-typedef struct point* point
 
-point create_point_nul();
-point create_point(int x, int y);
+typedef struct point * Point;
 
-point set_xy(point p , int x, int y);
-point set_x(point p , int x);
-point set_y(point p , int y);
+Point create_point_nul();
+Point create_point(int x, int y);
 
-point get_x(point p , int x);
-point get_y(point p , int y);
+Point set_xy(Point p , int x, int y);
+Point set_x(Point p , int x);
+Point set_y(Point p , int y);
 
-void destroy_point(point p);
+int get_x(Point p);
+int get_y(Point p);
+
+void destroy_point(Point p);
 
 
 #endif
