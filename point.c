@@ -1,8 +1,9 @@
-#include point.h
+#include <stdlib.h>
+#include "point.h"
 
 point create_point_nul()
 {
-	point p = malloc(sizeof(p*));
+	point p = malloc(sizeof(point));
 	p->x=0;
 	p->y=0;
 	return p;
@@ -10,10 +11,10 @@ point create_point_nul()
 
 point create_point(int x, int y)
 {
-	point p = malloc(sizeof(p*));
+	point p = malloc(sizeof(point));
 	p->x = x;
 	p->y = y;
-	return p
+	return p;
 }
 
 point set_xy(point p, int x, int y)
@@ -35,16 +36,7 @@ point set_y(point p, int y)
 	return p;
 }
 
-point get_x(point p, int x)
-{
-	return p->x;
-}
-point get_y(point p, int y)
-{
-	return p->y;
-}
-
 void destroy_point(point p)
 {
-	free(p)
+	free(p);
 }

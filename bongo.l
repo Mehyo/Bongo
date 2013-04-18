@@ -2,23 +2,21 @@
 #include "bongo.tab.h"
 %}
 
-
 %%
 
+"(" {return OPEN;}
+")" {return CLOSE;}
 
-"(" {ECHO; return OPEN;}
-")" {ECHO; return CLOSE;}
+"draw " {return DRAW;}
+"fill " {return DRAW;}
 
-"draw " {ECHO; return DRAW;}
-"fill " {ECHO; return DRAW;}
+"--" {return SEPARATOR;}
 
-"--" {ECHO; return SEPARATOR;}
+[0-9]+ {ECHO; NUMBER == yytext[0]; return NUMBER;}
 
-[0-9]+ {ECHO; return NUMBER;}
+"," {return COMMA;}
 
-"," {ECHO; return COMMA;}
-
-";" {ECHO; return TERM;}
+";" {return TERM;}
 
 %%
 

@@ -1,6 +1,8 @@
+
 %{
 	#include <stdio.h>
 	#include <stdlib.h>
+	#include "test.h"
 
 	void yyerror(char* s);
 %}
@@ -19,7 +21,7 @@ sep : SEPARATOR point
 point : OPEN num COMMA num CLOSE sep
 	;
 
-num : NUMBER
+num : NUMBER {printf(" {TEST %d} ", NUMBER);}
 	;
 
 %%
