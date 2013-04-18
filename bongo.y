@@ -11,7 +11,7 @@
 	void yyerror(char* s);
 %}
 
-%token DRAW SEPARATOR OPEN CLOSE COMMA NUMBER TERM
+%token DRAW SEPARATOR OPEN CLOSE COMMA DOUBLE NUMBER TERM FOIS DIVID PLUS MINUS
 
 %%
 
@@ -22,11 +22,22 @@ sep : SEPARATOR point
 	| {}
 	;
 
-point : OPEN num COMMA num CLOSE sep
+point : OPEN op COMMA op CLOSE sep
+	| OPEN op DOUBLE op CLOSE sep
+	;
+
+op : OPEN op CLOSE
+	| op FOIS NUMBER {tab[i-1] *= $3;}
+	| op DIVID NUMBER {tab[i-1] /= $3;}
+	| op PLUS NUMBER {tab[i-1] += $3;}
+	| op MINUS NUMBER {tab[i-1] -= $3;}
+	| num
 	;
 
 num : NUMBER {tab = length_test(i, tab); tab[i] = $$; i++;}
 	;
+
+
 
 %%
 

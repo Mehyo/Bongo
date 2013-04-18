@@ -20,6 +20,7 @@
 [0-9]+ {yylval = atoi(yytext); return NUMBER;}
 
 "," {return COMMA;}
+":" {return DOUBLE;}
 
 ";" {return TERM;}
 

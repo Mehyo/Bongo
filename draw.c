@@ -16,7 +16,7 @@ void draw_line (cairo_t* cr,  Point p1, Point p2){
   //Enregistrer la ligne du point (10,10) au point (50,50)
   cairo_line_to(cr, p2->x , p2->y );
   //Met la largeur de trait a 10
-  cairo_set_line_width (cr, 10.0);
+  cairo_set_line_width (cr, 5.0);
   //Tracer la ligne
   cairo_stroke(cr);
 
