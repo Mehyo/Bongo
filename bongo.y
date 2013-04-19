@@ -41,6 +41,10 @@ op : OPEN op CLOSE
 	| op DIVID NUMBER {tab[i-1] /= $3;}
 	| op PLUS NUMBER {tab[i-1] += $3;}
 	| op MINUS NUMBER {tab[i-1] -= $3;}
+	| NUMBER FOIS op {tab[i-1] *= $3;}
+	| NUMBER DIVID op {tab[i-1] /= $3;}
+	| NUMBER PLUS op {tab[i-1] += $3;}
+	| NUMBER MINUS op {tab[i-1] -= $3;}
 	| num
 	;
 
