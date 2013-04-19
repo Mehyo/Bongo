@@ -3,9 +3,14 @@
 
 #include "point.h"
 
+int* pos_tab;
+int tab_length;
+
 void destroy();
-int draw(Point p1, Point p2);
-void fill(Point* tab_point, int length);
+
+void draw();
+void fill();
+
 int* length_test(int i, int* tab);
 
 #endif

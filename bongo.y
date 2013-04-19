@@ -5,8 +5,6 @@
 	#include "draw.h"
 	#include "point.h"
 
-	int* tab;
-	int i = 0;
 	int is_fill = 0;
 
 	void yyerror(char* s);
@@ -33,22 +31,22 @@ sep : SEPARATOR point
 
 point : OPEN op COMMA op CLOSE sep
 	| OPEN op DOUBLE op CLOSE sep
-	| CYCLE sep {tab = length_test(i+2, tab); tab[i] = tab[0]; tab[i+1] = tab[1]; i+=2}
+	| CYCLE sep {pos_tab = length_test(tab_length+2, pos_tab); pos_tab[tab_length] = pos_tab[0]; pos_tab[tab_length+1] = pos_tab[1]; tab_length+=2;}
 	;
 
 op : OPEN op CLOSE
-	| op FOIS NUMBER {tab[i-1] *= $3;}
-	| op DIVID NUMBER {tab[i-1] /= $3;}
-	| op PLUS NUMBER {tab[i-1] += $3;}
-	| op MINUS NUMBER {tab[i-1] -= $3;}
-	| NUMBER FOIS op {tab[i-1] *= $3;}
-	| NUMBER DIVID op {tab[i-1] /= $3;}
-	| NUMBER PLUS op {tab[i-1] += $3;}
-	| NUMBER MINUS op {tab[i-1] -= $3;}
+	| op FOIS NUMBER {pos_tab [ tab_length-1 ] *= $3;}
+	| op DIVID NUMBER {pos_tab [ tab_length-1 ] /= $3;}
+	| op PLUS NUMBER {pos_tab [ tab_length-1 ] += $3;}
+	| op MINUS NUMBER {pos_tab [ tab_length-1 ] -= $3;}
+	| NUMBER FOIS op {pos_tab [ tab_length-1 ] *= $3;}
+	| NUMBER DIVID op {pos_tab [ tab_length-1 ] /= $3;}
+	| NUMBER PLUS op {pos_tab [ tab_length-1 ] += $3;}
+	| NUMBER MINUS op {pos_tab [ tab_length-1 ] -= $3;}
 	| num
 	;
 
-num : NUMBER {tab = length_test(i, tab); tab[i] = $$; i++;}
+num : NUMBER {pos_tab = length_test(tab_length, pos_tab); pos_tab[tab_length] = $$; tab_length++;}
 	;
 
 
@@ -65,51 +63,13 @@ int main(void)
 {
 	yyparse();
 
-	if(!is_fill){
+	if(!is_fill)
+		draw();
+	
+	else
+		fill();
 
-		if(i<4){
-			printf("Usage : Draw command need at least two point.\n");
-			return 0;
-		}
-
-		Point p1, p2;
-		int j = 0;
-
-		p1 = create_point(tab[j], tab[j+1]);
-		j+=2;
-		p2 = create_point(tab[j], tab[j+1]);
-		j+=2;
-
-		draw(p1, p2);
-
-		for(int j=0; j<i; j+=2){
-			p1 = p2;
-			p2 = create_point(tab[j], tab[j+1]);
-			draw(p1, p2);
-			j+=2;
-		}
-	}
-	else{
-		
-		if(i<4){
-			printf("Usage : Fill command need at least two point.\n");
-			return 0;
-		}
-
-		Point* tab_point = malloc(sizeof(*tab_point)*(i/2));
-		
-		for(int j=0; j<i; j+=2){
-			tab_point[j/2] = create_point(tab[j], tab[j+1]);
-		}
-
-		fill(tab_point, i/2);
-	}
 	destroy();
 
-	
 	return EXIT_SUCCESS;
-}
-
-void vide(int* tab){
-
 }
