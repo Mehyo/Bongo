@@ -47,6 +47,41 @@ int draw(Point p1, Point p2){
   return 0;
 }
 
+void fill(Point* tab_point, int length){
+
+  pdf_surface = cairo_pdf_surface_create("test.pdf",250, 250);
+  cr = cairo_create(pdf_surface);
+  
+  Point p1,p2;
+  
+  draw_line(cr, tab_point[0], tab_point[1]);
+
+  p1 = tab_point[1];
+
+  for(int i=2; i< length; i++){
+
+    p2 = tab_point[i];
+
+    while(p1->x != p2->x && p1->y != p2->y){
+      if(p1->x > p2->x)
+        p1->x--;
+      else
+        p1->x++;
+      
+      if(p1->y > p2->y)
+        p1->y--;
+      else
+        p1->y++;
+      
+      draw_line(cr, tab_point[0], p1);
+    }
+  }
+
+}
+
+
+
+
 int* length_test(int i, int* tab){
   if(i == 0)
     tab = malloc(4*sizeof(int*));

@@ -7,13 +7,21 @@
 
 	int* tab;
 	int i = 0;
+	int is_fill = 0;
 
 	void yyerror(char* s);
 %}
 
-%token DRAW SEPARATOR OPEN CLOSE COMMA DOUBLE NUMBER TERM FOIS DIVID PLUS MINUS
+%token DRAW SEPARATOR OPEN CLOSE COMMA DOUBLE NUMBER TERM FOIS DIVID PLUS MINUS FILL
 
 %%
+
+start : fill
+	| draw
+	;
+
+fill : FILL point TERM {is_fill = 1;}
+	;
 
 draw : DRAW point TERM
 	;
@@ -49,25 +57,47 @@ void yyerror(char* s)
 
 int main(void)
 {
-	Point p1, p2;
-	int j = 0;
-
 	yyparse();
 
-	p1 = create_point(tab[j], tab[j+1]);
-	j+=2;
-	p2 = create_point(tab[j], tab[j+1]);
-	j+=2;
+	if(!is_fill){
 
-	draw(p1, p2);
-	
-	while(j<i){
-		p1 = p2;
-		p2 = create_point(tab[j], tab[j+1]);
-		draw(p1, p2);
+		if(i<4){
+			printf("Usage : Draw command need at least two point.\n");
+			return 0;
+		}
+
+		Point p1, p2;
+		int j = 0;
+
+		p1 = create_point(tab[j], tab[j+1]);
 		j+=2;
-	}
+		p2 = create_point(tab[j], tab[j+1]);
+		j+=2;
 
+		draw(p1, p2);
+
+		for(int j=0; j<i; j+=2){
+			p1 = p2;
+			p2 = create_point(tab[j], tab[j+1]);
+			draw(p1, p2);
+			j+=2;
+		}
+	}
+	else{
+		
+		if(i<4){
+			printf("Usage : Fill command need at least two point.\n");
+			return 0;
+		}
+
+		Point* tab_point = malloc(sizeof(*tab_point)*(i/2));
+		
+		for(int j=0; j<i; j+=2){
+			tab_point[j/2] = create_point(tab[j], tab[j+1]);
+		}
+
+		fill(tab_point, i/2);
+	}
 	destroy();
 
 	

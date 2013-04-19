@@ -8,7 +8,7 @@
 ")" {return CLOSE;}
 
 "draw " {return DRAW;}
-"fill " {return DRAW;}
+"fill " {return FILL;}
 
 "--" {return SEPARATOR;}
 
