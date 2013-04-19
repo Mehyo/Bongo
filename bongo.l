@@ -12,6 +12,8 @@
 
 "--" {return SEPARATOR;}
 
+"cycle" {return CYCLE;}
+
 "+" {return PLUS;}
 "/" {return DIVID;}
 "-" {return MINUS;}

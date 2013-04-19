@@ -12,18 +12,19 @@
 	void yyerror(char* s);
 %}
 
-%token DRAW SEPARATOR OPEN CLOSE COMMA DOUBLE NUMBER TERM FOIS DIVID PLUS MINUS FILL
+%token DRAW SEPARATOR OPEN CLOSE COMMA DOUBLE NUMBER TERM FOIS DIVID PLUS MINUS FILL CYCLE
 
 %%
 
-start : fill
-	| draw
+start : fill start
+	| draw start
+	| {}
 	;
 
 fill : FILL point TERM {is_fill = 1;}
 	;
 
-draw : DRAW point TERM
+draw : DRAW point TERM {}
 	;
 
 sep : SEPARATOR point
@@ -32,6 +33,7 @@ sep : SEPARATOR point
 
 point : OPEN op COMMA op CLOSE sep
 	| OPEN op DOUBLE op CLOSE sep
+	| CYCLE sep {tab = length_test(i+2, tab); tab[i] = tab[0]; tab[i+1] = tab[1]; i+=2}
 	;
 
 op : OPEN op CLOSE
@@ -102,4 +104,8 @@ int main(void)
 
 	
 	return EXIT_SUCCESS;
+}
+
+void vide(int* tab){
+
 }
