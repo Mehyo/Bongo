@@ -1,11 +1,12 @@
-
 %{
 	#include <stdio.h>
 	#include <stdlib.h>
+	#include "stack.h"
 	#include "draw.h"
 	#include "point.h"
+	#include "bongo.tab.h"
 
-	int is_fill = 0;
+	int is_fill, is_translate;
 
 	void yyerror(char* s);
 %}
@@ -14,42 +15,40 @@
 
 %%
 
-start : fill start
-	| draw start
-	| {}
+start : fill
+	| draw
 	;
 
 fill : FILL point TERM {is_fill = 1;}
 	;
 
-draw : DRAW point TERM {}
+draw : DRAW point TERM 
 	;
 
 sep : SEPARATOR point
-	| {}
+	|
 	;
 
-point : OPEN op COMMA op CLOSE sep
-	| OPEN op DOUBLE op CLOSE sep
-	| CYCLE sep {pos_tab = length_test(tab_length+2, pos_tab); pos_tab[tab_length] = pos_tab[0]; pos_tab[tab_length+1] = pos_tab[1]; tab_length+=2;}
+point : OPEN valeur COMMA valeur CLOSE sep
+	| OPEN valeur DOUBLE valeur CLOSE sep {polaire();}
+	| CYCLE sep {cycle();}
+	| PLUS OPEN valeur COMMA valeur CLOSE sep {translate();}
 	;
 
-op : OPEN op CLOSE
-	| op FOIS NUMBER {pos_tab [ tab_length-1 ] *= $3;}
-	| op DIVID NUMBER {pos_tab [ tab_length-1 ] /= $3;}
-	| op PLUS NUMBER {pos_tab [ tab_length-1 ] += $3;}
-	| op MINUS NUMBER {pos_tab [ tab_length-1 ] -= $3;}
-	| NUMBER FOIS op {pos_tab [ tab_length-1 ] *= $3;}
-	| NUMBER DIVID op {pos_tab [ tab_length-1 ] /= $3;}
-	| NUMBER PLUS op {pos_tab [ tab_length-1 ] += $3;}
-	| NUMBER MINUS op {pos_tab [ tab_length-1 ] -= $3;}
-	| num
+valeur : OPEN {push(6, &stack_operator);} valeur CLOSE {calc(stack_number, stack_operator);}
+  	| num {calc(stack_number, stack_operator);}
 	;
 
-num : NUMBER {pos_tab = length_test(tab_length, pos_tab); pos_tab[tab_length] = $$; tab_length++;}
+num : NUMBER operator {push($$, &stack_number);}
+	| MINUS NUMBER  {push((-1)*$2, &stack_number);}
 	;
 
-
+operator : FOIS valeur {push(3, &stack_operator);}
+	| DIVID valeur {push(4, &stack_operator);}
+	| PLUS valeur {push(1, &stack_operator);}
+	| MINUS valeur {push(2, &stack_operator);}
+	|
+	;
 
 %%
 
@@ -61,6 +60,8 @@ void yyerror(char* s)
 
 int main(void)
 {
+	stack_number = create_stack(0);
+	stack_operator = create_stack(0);
 	yyparse();
 
 	if(!is_fill)

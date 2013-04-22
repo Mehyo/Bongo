@@ -13,4 +13,9 @@ void fill();
 
 int* length_test(int i, int* tab);
 
+void calc(Stack stack_number, Stack stack_operator);
+void cycle();
+void translate();
+void polaire();
+
 #endif
