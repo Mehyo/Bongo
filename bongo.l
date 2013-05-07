@@ -4,6 +4,8 @@
 
 %%
 
+[A-Za-z0-9] {yylval = yytext; return VARIABLE;}
+
 "(" {return OPEN;}
 ")" {return CLOSE;}
 
@@ -25,6 +27,8 @@
 ":" {return DOUBLE;}
 
 ";" {return TERM;}
+
+[[:space:]]*"="[[:space:]]* {return EQUAL;}
 
 \n {return LINE;}
 

@@ -2,6 +2,7 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include "stack.h"
+	#include "variable.h"
 	#include "draw.h"
 	#include "point.h"
 	#include "bongo.tab.h"
@@ -11,12 +12,17 @@
 	void yyerror(char* s);
 %}
 
-%token DRAW SEPARATOR OPEN CLOSE COMMA DOUBLE NUMBER TERM FOIS DIVID PLUS MINUS FILL CYCLE LINE
+%token DRAW SEPARATOR OPEN CLOSE COMMA DOUBLE NUMBER TERM FOIS DIVID PLUS MINUS FILL CYCLE LINE VARIABLE EQUAL
 
 %%
 
-start : fill line 
+start : variable start
+	| fill line 
 	| draw line
+	|
+	;
+
+variable : VARIABLE {name = $$;} EQUAL point TERM {create_variable(name, pos_tab);}
 	|
 	;
 
