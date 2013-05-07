@@ -11,12 +11,17 @@
 	void yyerror(char* s);
 %}
 
-%token DRAW SEPARATOR OPEN CLOSE COMMA DOUBLE NUMBER TERM FOIS DIVID PLUS MINUS FILL CYCLE
+%token DRAW SEPARATOR OPEN CLOSE COMMA DOUBLE NUMBER TERM FOIS DIVID PLUS MINUS FILL CYCLE LINE
 
 %%
 
-start : fill
-	| draw
+start : fill line 
+	| draw line
+	|
+	;
+
+line : LINE  {printf("here\n"); push(6, &stack_operator);} start
+	|
 	;
 
 fill : FILL point TERM {is_fill = 1;}
@@ -31,11 +36,11 @@ sep : SEPARATOR point
 
 point : OPEN valeur COMMA valeur CLOSE sep
 	| OPEN valeur DOUBLE valeur CLOSE sep {polaire();}
-	| CYCLE sep {cycle();}
-	| PLUS OPEN valeur COMMA valeur CLOSE sep {translate();}
+	| CYCLE {cycle();} sep
+	| PLUS OPEN valeur COMMA valeur CLOSE {translate();} sep 
 	;
 
-valeur : OPEN {push(6, &stack_operator);} valeur CLOSE {calc(stack_number, stack_operator);}
+valeur : OPEN valeur CLOSE {calc(stack_number, stack_operator);}
   	| num {calc(stack_number, stack_operator);}
 	;
 
@@ -60,9 +65,15 @@ void yyerror(char* s)
 
 int main(void)
 {
-	stack_number = create_stack(0);
+	stack_number = create_stack(-1);
 	stack_operator = create_stack(0);
+
 	yyparse();
+
+	int i;
+	for(i=0; i< tab_length;i++ )
+		printf("Main %d ; ", pos_tab[i]);
+	printf("\n");
 
 	if(!is_fill)
 		draw();

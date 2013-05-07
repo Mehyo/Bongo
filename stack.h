@@ -14,7 +14,7 @@ Stack stack_number;
 
 Stack create_stack(int val);
 
-void push(int operator, Stack *s);
+void push(int val, Stack *s);
 
 int pop(Stack *s);
 

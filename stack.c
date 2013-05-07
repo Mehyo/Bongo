@@ -12,9 +12,9 @@ Stack create_stack(int val)
 	return s;
 }
 
-void push(int operator, Stack *s)
+void push(int val, Stack *s)
 {
-	Stack new_s = create_stack(operator);	
+	Stack new_s = create_stack(val);	
 	
 	if(s != NULL)
 		new_s->next = *s;

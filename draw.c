@@ -2,6 +2,7 @@
 #include <cairo/cairo-pdf.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "point.h"
 #include "stack.h"
@@ -17,7 +18,7 @@ void draw_line (cairo_t* cr,  Point p1, Point p2){
   //Enregistrer la ligne du point (10,10) au point (50,50)
   cairo_line_to(cr, p2->x , p2->y );
   //Met la largeur de trait a 10
-  cairo_set_line_width (cr, 5.0);
+  cairo_set_line_width (cr, 1.0);
   //Tracer la ligne
   cairo_stroke(cr);
 
@@ -43,6 +44,10 @@ int* length_test(int i, int* tab){
 
 void set_draw(Point p1, Point p2){
   
+  toString(p1);
+  toString(p2);
+  printf("******\n");
+
   if(!cr){
     //Creation de la surface pdf associee au fichier ex1.pdf
     pdf_surface = cairo_pdf_surface_create("test.pdf",250, 250);
@@ -51,17 +56,18 @@ void set_draw(Point p1, Point p2){
     cr = cairo_create(pdf_surface);
   }
 
-  printf("P1 %d, %d \n", p1->x, p1->y);
-  printf("P2 %d, %d \n", p2->x, p2->y);
-
   draw_line(cr, p1, p2);
 
 }
 
+int is_new_line(int val){
+  if(pos_tab[val] == 5000)
+    return 1;
+  return 0;
+}
+
+
 void draw(){
-  int i;
-  for(i=0; i<tab_length;i++)
-  printf("%d\n", pos_tab[i]);
 
   if(tab_length<4){
       printf("Usage : Draw command need at least two point.\n");
@@ -69,20 +75,34 @@ void draw(){
     }
 
     Point p1, p2;
-    int j = 0;
-    p1 = create_point(pos_tab[j], pos_tab[j+1]);
-    j+=2;
-    p2 = create_point(pos_tab[j], pos_tab[j+1]);
-    j+=2;
+    int j=0, p1_x, p1_y, p2_x, p2_y;
+while(j<tab_length){
+
+    p1_x = pos_tab[j];
+
+    p1_y = pos_tab[j+1];
+
+    p1 = create_point(p1_x, p1_y);
+
+    for(j+=2; j<tab_length; j+=2){
+
+      if(is_new_line(j)){
+        j++;
+        break;
+      }
+
+      p2_x = pos_tab[j];
+
+      p2_y = pos_tab[j+1];
+
+
+    p2 = create_point(p2_x, p2_y);
 
     set_draw(p1, p2);
 
-    for(j=4; j<tab_length; j+=2){
-      p1 = p2;
-      p2 = create_point(pos_tab[j], pos_tab[j+1]);
-
-      set_draw(p1, p2);
+    p1=p2;
     }
+  }
 }
 
 void set_fill(Point* tab_point, int length){
@@ -137,76 +157,110 @@ void fill(){
 }
 
 
-
-
-/* '+' == 1, '-' == 2, '*' == 3, '/' == 4, ')' == 5, debut == 0 
+/* '+' == 1, '-' == 2, '*' == 3, '/' == 4, ')' == 5, debut == -1
   Principe d'une pile, on empile les opérations qu'on trouve puis on les fait en dépilant.*/
 
-void calc(Stack stack_number, Stack stack_operator){
+void calc(){
+  int num1, operator, result, num2;
 
-  int num1, num2, operator, result;
+  
 
-    while (1){
-    num2 = pop(&stack_number);
+  operator = pop(&stack_operator);  
+  if (operator == 6){
+    
+    pos_tab = length_test(tab_length++, pos_tab);
 
-    operator = pop(&stack_operator);
+    pos_tab[tab_length-1] = 5000;
 
-    if(num2 == 0){
-      result = 0 + num2;
-      push(0, &stack_number);
-    }
-
-    num1 = pop(&stack_number);
-
-    if (num1 == 0){
-      result = num1 + num2;
-      push(0, &stack_number);
-    }
-
-    if(operator == 0){
-      push(0, &stack_operator);
-      break;
-    }
-
-    if(operator == 1)
-      result = num1 + num2;
-
-    if(operator == 2)
-      result = num1 - num2;
-
-    if(operator == 3)
-      result = num1 * num2;
-
-    if(operator == 4)
-      result = num1 / num2;
-
-    if(operator == 5)
-      break;
   }
-  
-  pos_tab = length_test(tab_length, pos_tab);
-  
-  pos_tab[tab_length++] = result;
+  else
+    push(operator, &stack_operator);
+
+  while(1){
+
+    num2 = pop(&stack_number);
+    
+    if(num2 == -1){
+      push(-1, &stack_number);
+      break;
+    }
+    
+    else{
+    
+      num1 = pop(&stack_number);
+    
+      if (num1 == -1){
+        result = num2;
+        push(-1, &stack_number);
+        break;
+      }
+      else{
+
+          if(operator == 0)
+            push(0, &stack_operator);
+
+          if(operator == 1)
+            result = num1 + num2;
+
+          if(operator == 2)
+            result = num1 - num2;
+
+          if(operator == 3)
+            result = num1 * num2;
+
+          if(operator == 4)
+            result = num1 / num2;
+          break;
+      }
+    }
+  }
+
+  pos_tab = length_test(tab_length++, pos_tab);
+
+  pos_tab[tab_length-1] = result;
+
 }
 
 void cycle(){
   tab_length += 2;
   pos_tab = length_test(tab_length, pos_tab);
 
-  pos_tab[tab_length-2] = pos_tab[0];
-  pos_tab[tab_length-1] = pos_tab[1];
+  int i;
+  for(i=tab_length; i>0; i--)
+    if(pos_tab[i]==5000)
+      break;
+
+  pos_tab[tab_length-2] = pos_tab[i+1];
+  pos_tab[tab_length-1] = pos_tab[i+2];
 }
 
 void translate(){
 
-  printf("%d %d %d %d\n",pos_tab[tab_length-1], pos_tab[tab_length-2], pos_tab[tab_length-3], pos_tab[tab_length-4]);
-
   pos_tab[tab_length-2] += pos_tab[tab_length-4];
   pos_tab[tab_length-1] += pos_tab[tab_length-3];
+
 }
 
 void polaire(){
 
   pos_tab[tab_length-2] = cos(pos_tab[tab_length-1]) * pos_tab[tab_length-2] ;
   pos_tab[tab_length-1] += sin(pos_tab[tab_length-1]) * pos_tab[tab_length-2] ;
+}
+
+// void restart(){
+//   free(pos_tab)
+//   pos_tab = realloc(pos_tab, sizeof(int*));
+//   tab_length = 0;
+// }
+
+int* term(int tab_length, int* pos_tab){
+  
+  tab_length += 2;
+  pos_tab = length_test(tab_length, pos_tab);
+
+  pos_tab[tab_length-2] = 0;
+  pos_tab[tab_length-1] = 0;
+
+  return pos_tab;
+
 }

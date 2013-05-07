@@ -23,3 +23,7 @@ void destroy_point(Point p)
 {
 	free(p);
 }
+
+void toString(Point p){
+	printf("X = %d\n Y = %d\n",p->x, p->y);
+}

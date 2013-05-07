@@ -26,5 +26,7 @@
 
 ";" {return TERM;}
 
+\n {return LINE;}
+
 %%
 

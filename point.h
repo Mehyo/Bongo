@@ -14,5 +14,6 @@ Point create_point(int x, int y);
 
 void destroy_point(Point p);
 
+void toString(Point p);
 
 #endif
