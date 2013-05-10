@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
 #include "point.h"
 #include "stack.h"
 #include "draw.h"
+#include "variable.h"
 
 cairo_t* cr;
 cairo_surface_t* pdf_surface;
@@ -44,10 +44,6 @@ int* length_test(int i, int* tab){
 
 void set_draw(Point p1, Point p2){
   
-  toString(p1);
-  toString(p2);
-  printf("******\n");
-
   if(!cr){
     //Creation de la surface pdf associee au fichier ex1.pdf
     pdf_surface = cairo_pdf_surface_create("test.pdf",250, 250);
@@ -76,7 +72,7 @@ void draw(){
 
     Point p1, p2;
     int j=0, p1_x, p1_y, p2_x, p2_y;
-while(j<tab_length){
+  while(j<tab_length){
 
     p1_x = pos_tab[j];
 
@@ -160,17 +156,19 @@ void fill(){
 /* '+' == 1, '-' == 2, '*' == 3, '/' == 4, ')' == 5, debut == -1
   Principe d'une pile, on empile les opérations qu'on trouve puis on les fait en dépilant.*/
 
-void calc(){
+void calc(int i){
   int num1, operator, result, num2;
 
   
 
   operator = pop(&stack_operator);  
   if (operator == 6){
-    
-    pos_tab = length_test(tab_length++, pos_tab);
+    if(i == 0){
+        pos_tab = length_test(tab_length++, pos_tab);
 
-    pos_tab[tab_length-1] = 5000;
+        pos_tab[tab_length-1] = 5000;
+  }
+
 
   }
   else
@@ -215,43 +213,61 @@ void calc(){
     }
   }
 
+  if(i == 0){
   pos_tab = length_test(tab_length++, pos_tab);
 
   pos_tab[tab_length-1] = result;
+}
+  else{
+    add_point(result);
+  }
 
 }
 
-void cycle(){
-  tab_length += 2;
-  pos_tab = length_test(tab_length, pos_tab);
+void cycle(int i){
+  if(i == 0){
+    tab_length += 2;
+    pos_tab = length_test(tab_length, pos_tab);
 
-  int i;
-  for(i=tab_length; i>0; i--)
-    if(pos_tab[i]==5000)
-      break;
+    int i;
+    for(i=tab_length; i>0; i--)
+      if(pos_tab[i]==5000)
+        break;
 
-  pos_tab[tab_length-2] = pos_tab[i+1];
-  pos_tab[tab_length-1] = pos_tab[i+2];
+    pos_tab[tab_length-2] = pos_tab[i+1];
+    pos_tab[tab_length-1] = pos_tab[i+2];
+  }
+
+  else{
+    add_point(point_tab[0]);
+    add_point(point_tab[1]);
+  }
 }
 
-void translate(){
+void translate(int i){
+  if(i == 0){
+    pos_tab[tab_length-2] += pos_tab[tab_length-4];
+    pos_tab[tab_length-1] += pos_tab[tab_length-3];
+  }
+  else{
+    point_tab[nb_element_point-2] += point_tab[nb_element_point-4];
+    point_tab[nb_element_point-1] += point_tab[nb_element_point-3];
 
-  pos_tab[tab_length-2] += pos_tab[tab_length-4];
-  pos_tab[tab_length-1] += pos_tab[tab_length-3];
+  }
 
 }
 
-void polaire(){
+void polaire(int i){
+  if(i == 0){
+    pos_tab[tab_length-2] = cos(pos_tab[tab_length-1]) * pos_tab[tab_length-2] ;
+    pos_tab[tab_length-1] += sin(pos_tab[tab_length-1]) * pos_tab[tab_length-2] ;
+  }
 
-  pos_tab[tab_length-2] = cos(pos_tab[tab_length-1]) * pos_tab[tab_length-2] ;
-  pos_tab[tab_length-1] += sin(pos_tab[tab_length-1]) * pos_tab[tab_length-2] ;
+  else{
+    point_tab[nb_element_point-2] = cos(point_tab[nb_element_point-1]) * point_tab[nb_element_point-2];
+    point_tab[nb_element_point-1] += sin(point_tab[nb_element_point-1]) * point_tab[nb_element_point-2];
+  }
 }
-
-// void restart(){
-//   free(pos_tab)
-//   pos_tab = realloc(pos_tab, sizeof(int*));
-//   tab_length = 0;
-// }
 
 int* term(int tab_length, int* pos_tab){
   

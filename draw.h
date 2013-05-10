@@ -14,10 +14,10 @@ void fill();
 
 int* length_test(int i, int* tab);
 
-void calc();
-void cycle();
-void translate();
-void polaire();
+void calc(int i);
+void cycle(int i);
+void translate(int i);
+void polaire(int i);
 void restart();
 int* term(int length, int* tab);
 

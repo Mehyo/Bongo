@@ -1,7 +1,7 @@
-all :
+all:
 	lex bongo.l
 	bison -d -v bongo.y
-	gcc bongo.tab.c lex.yy.c $(pkg-config -cflags -libs cairo) -lcairo stack.c draw.c point.c -lm -lfl -o bongo
+	gcc bongo.tab.c lex.yy.c $(pkg-config -cflags -libs cairo) stack.c draw.c variable.c point.c -lm -lcairo -lfl -o bongo
 	./bongo < test.txt
 	xpdf test.pdf &
 

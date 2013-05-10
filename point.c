@@ -1,5 +1,6 @@
 #include "point.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 Point create_point_nul()
 {

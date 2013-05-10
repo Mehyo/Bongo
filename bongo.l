@@ -1,34 +1,38 @@
 %{
 #include "bongo.tab.h"
+#include <string.h> 
+char* toto;
 %}
 
 %%
 
-[A-Za-z0-9] {yylval = yytext; return VARIABLE;}
+"draw " {ECHO;return DRAW;}
+"fill " {ECHO;return FILL;}
 
-"(" {return OPEN;}
-")" {return CLOSE;}
+[A-Za-z0-9]+[[:space:]]+ {ECHO; yylval.name = strdup(yytext);return VARIABLE;}
 
-"draw " {return DRAW;}
-"fill " {return FILL;}
+"(" {ECHO;return OPEN;}
+")" {ECHO;return CLOSE;}
 
-"--" {return SEPARATOR;}
 
-"cycle" {return CYCLE;}
 
-"+" {return PLUS;}
-"/" {return DIVID;}
-"-" {return MINUS;}
-"*" {return FOIS;}
+"--" {ECHO;return SEPARATOR;}
 
-[0-9]+ {yylval = atoi(yytext); return NUMBER;}
+"cycle" {ECHO;return CYCLE;}
 
-"," {return COMMA;}
-":" {return DOUBLE;}
+"+" {ECHO;return PLUS;}
+"/" {ECHO;return DIVID;}
+"-" {ECHO;return MINUS;}
+"*" {ECHO;return FOIS;}
 
-";" {return TERM;}
+[0-9]+ {ECHO;yylval.entier = atoi(yytext); return NUMBER;}
 
-[[:space:]]*"="[[:space:]]* {return EQUAL;}
+"," {ECHO;return COMMA;}
+":" {ECHO;return DOUBLE;}
+
+";" {ECHO;return TERM;}
+
+"="[[:space:]]* {ECHO;return EQUAL;}
 
 \n {return LINE;}
 
